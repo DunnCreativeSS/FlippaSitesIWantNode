@@ -8,64 +8,80 @@ var bins = [];
 var htmls = [];
 var ratios = {};
 abc = 0;
+
 flippa = new Flippa();
 
 app.get('/', function(req, res) {
-    res.header('Content-Type', 'text/html');
+	revenues = [];
+	profits = [];
+	bins = [];
+	htmls = [];
+	ratios = {};
+	abc = 0;
+		if (!req.param('minrevenue')){
+		lala2 = "<html><meta></meta><body><form action='/' method='GET'>Minimum revenue:<input type='text' value='1000' name='minrevenue'><input type='submit'></form>";
+                        
+		lala2+= "</body></html>";
+		res.send(lala2);
+	}
+	else{
+		res.header('Content-Type', 'text/html');
 
-    flippa
-        .authenticate({
-            grant_type: "password",
-            username: "yourflippaemail",
-            password: "yourflippapass"
-        })
-        .then(function(response) {
-            // Authentication succeeded; can now make authorized requests.
-            // console.log(flippa.client.accessToken);
-            flippa
-                .listings
-                .list({
-                    filter: {
-                        status: "open",
-                        has_verified_revenue: true
-                    }
-                }) //,has_bin: true}})
-                .then(function lala(response) {
-                    //console.log(response.body.data[0]);
-                    if (response == undefined) {
-                        lala2 = "<html><meta></meta><body>";
-                        for (var key in ratios) {
-                            //console.log(key['revenues']);
-                            if (key != undefined && ratios[key]['revenues'] != undefined && (ratios[key]['bins'] / ratios[key]['revenues']) != Infinity && ratios[key]['revenues'] >= 1000) {
-                                lala2 += ((ratios[key]['bins'] / ratios[key]['revenues']) + ' months for <a href="' + key + '">' + key + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + '<br>';
-                            }
-                        }
-                        lala2 += "</body></html>";
-                        console.log(lala2);
-                        res.send(lala2);
-                    } else {
+		flippa
+			.authenticate({
+				grant_type: "password",
+				username: "yourflippaemail",
+				password: "yourflippapassword"
+			})
+			.then(function(response) {
+				// Authentication succeeded; can now make authorized requests.
+				// console.log(flippa.client.accessToken);
+				flippa
+					.listings
+					.list({
+						filter: {
+							status: "open",
+							has_verified_revenue: true
+						}
+					}) //,has_bin: true}})
+					.then(function lala(response) {
+						//console.log(response.body.data[0]);
+						if (response == undefined) {
+							lala2 = "<html><meta></meta><body><form action='/' method='GET'>Minimum revenue:<input type='text' value='" + req.param('minrevenue') + "' name='minrevenue'><input type='submit'></form>";
+							for (var key in ratios) {
+								//console.log(key['revenues']);
+								if (key != undefined && ratios[key]['revenues'] != undefined && (ratios[key]['bins'] / ratios[key]['revenues']) != Infinity && ratios[key]['revenues'] >= req.param('minrevenue')) {
+									lala2 += ((ratios[key]['bins'] / ratios[key]['revenues']) + ' months for <a href="' + key + '">' + key + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + '<br>';
+								}
+							}
+						
+							lala2 += "</body></html>";
+							console.log(lala2);
+							res.send(lala2);
+						} else {
 
-                        if (abc >= 1) {
-                            //console.log(response.body);
-                            var result2 = (JSON.parse(response.body));
-                            var result = result2.data;
-                            getresponse(result, ((result2.meta)['page_number'] - 1) * (result2.meta)['page_size']);
-                            request((result2.links)['next'], function(error, response, body) {
-                                lala(response);
+							if (abc >= 1) {
+								//console.log(response.body);
+								var result2 = (JSON.parse(response.body));
+								var result = result2.data;
+								getresponse(result, ((result2.meta)['page_number'] - 1) * (result2.meta)['page_size']);
+								request((result2.links)['next'], function(error, response, body) {
+									lala(response);
 
-                            })
-                        } else {
-                            var result = (response.body.data);
-                            getresponse(result, (response.body.meta['page_number'] - 1) * response.body.meta['page_size']);
-                            request(response.body.links.next, function(error, response, body) {
-                                lala(response);
+								})
+							} else {
+								var result = (response.body.data);
+								getresponse(result, (response.body.meta['page_number'] - 1) * response.body.meta['page_size']);
+								request(response.body.links.next, function(error, response, body) {
+									lala(response);
 
-                            });
-                        }
-                        abc++;
-                    }
-                })
-        })
+								});
+							}
+							abc++;
+						}
+					})
+			})
+		}
 })
 
 app.listen(3000, function() {
