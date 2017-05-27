@@ -9,3 +9,7 @@ https://www.screencast.com/t/Oaa5MYDmvmE
 Version 3 has a variable minimum revenues GET param thru standard form:
 
 https://www.screencast.com/t/Serekpy7nP
+
+V4. has a variable maximum months ROI GET param thru standard form:
+
+https://www.screencast.com/t/TwWhq3ZLzKDU
