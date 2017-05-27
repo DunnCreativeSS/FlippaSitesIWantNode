@@ -2,6 +2,13 @@ var Flippa = require('./node_modules/flippa/dist/Flippa.js');
 var request = require('request');
 const express = require('express')
 const app = express()
+var revenues = [];
+var profits = [];
+var bins = [];
+var htmls = [];
+var ratios = {};
+abc = 0;
+flippa = new Flippa();
 
 app.get('/', function(req, res) {
     res.header('Content-Type', 'text/html');
@@ -65,17 +72,6 @@ app.listen(3000, function() {
     console.log('Example app listening on port 3000!')
 })
 
-var revenues = [];
-var profits = [];
-var bins = [];
-var htmls = [];
-var ratios = {};
-abc = 0;
-flippa = new Flippa();
-
-function sortNumber(a, b) {
-    return a - b;
-}
 
 function getresponse(result, n) {
     //console.log(n);
