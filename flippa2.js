@@ -19,7 +19,7 @@ app.get('/', function(req, res) {
 	ratios = {};
 	abc = 0;
 		if (!req.param('minrevenue')){
-		lala2 = "<html><meta></meta><body><form action='/' method='GET'>Minimum revenue:<input type='text' value='1000' name='minrevenue'><input type='submit'></form>";
+		lala2 = "<html><meta></meta><body><form action='/' method='GET'>Maximum months ROI:<input type='text' value='24' name='maxroi'> Minimum revenue:<input type='text' value='1000' name='minrevenue'><input type='submit'></form>";
                         
 		lala2+= "</body></html>";
 		res.send(lala2);
@@ -30,8 +30,8 @@ app.get('/', function(req, res) {
 		flippa
 			.authenticate({
 				grant_type: "password",
-				username: "yourflippaemail",
-				password: "yourflippapassword"
+				username: "jarettrsdunn@gmail.com",
+				password: "wordpass"
 			})
 			.then(function(response) {
 				// Authentication succeeded; can now make authorized requests.
@@ -47,10 +47,10 @@ app.get('/', function(req, res) {
 					.then(function lala(response) {
 						//console.log(response.body.data[0]);
 						if (response == undefined) {
-							lala2 = "<html><meta></meta><body><form action='/' method='GET'>Minimum revenue:<input type='text' value='" + req.param('minrevenue') + "' name='minrevenue'><input type='submit'></form>";
+							lala2 = "<html><meta></meta><body><form action='/' method='GET'>Maximum months ROI:<input type='text' value='" + req.param('maxroi') + "' name='maxroi'> Minimum revenue:<input type='text' value='" + req.param('minrevenue') + "' name='minrevenue'><input type='submit'></form>";
 							for (var key in ratios) {
 								//console.log(key['revenues']);
-								if (key != undefined && ratios[key]['revenues'] != undefined && (ratios[key]['bins'] / ratios[key]['revenues']) != Infinity && ratios[key]['revenues'] >= req.param('minrevenue')) {
+								if ((ratios[key]['bins'] / ratios[key]['revenues']) <= req.param('maxroi') && key != undefined && ratios[key]['revenues'] != undefined && (ratios[key]['bins'] / ratios[key]['revenues']) != Infinity && ratios[key]['revenues'] >= req.param('minrevenue')) {
 									lala2 += ((ratios[key]['bins'] / ratios[key]['revenues']) + ' months for <a href="' + key + '">' + key + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + '<br>';
 								}
 							}
