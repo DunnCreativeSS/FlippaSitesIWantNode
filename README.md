@@ -13,3 +13,7 @@ https://www.screencast.com/t/Serekpy7nP
 V4. has a variable maximum months ROI GET param thru standard form:
 
 https://www.screencast.com/t/TwWhq3ZLzKDU
+
+V5. has a variable dropdown for whether or not to consider Buy It Now values or traditional auctions:
+
+https://www.screencast.com/t/6M55Y14EEGnz  
