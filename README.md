@@ -21,3 +21,7 @@ https://www.screencast.com/t/6M55Y14EEGnz
 V6. shows those listings that have met reserve with a shiny green indicator:
 
 https://www.screencast.com/t/5sfX9HTpIOT3
+
+V7. shows listings sorted by those (auctions) ending soonest:
+
+https://www.screencast.com/t/hW0vt6rd
