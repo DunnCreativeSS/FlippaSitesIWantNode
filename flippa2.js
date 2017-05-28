@@ -54,16 +54,30 @@ app.get('/', function(req, res) {
 						//console.log(response.body.data[0]);
 						if (response == undefined) {
 							(req.param('has_bin') == "Y") ? lala2 = "<html><meta></meta><body><form action='/' method='GET'>Is BIN:<select name='has_bin'><option value='Y' selected>Yes</option><option value='N'>No</option></select> Maximum months ROI:<input type='text' value='" + req.param('maxroi') + "' name='maxroi'> Minimum revenue:<input type='text' value='" + req.param('minrevenue') + "' name='minrevenue'><input type='submit'></form>" : lala2 = "<html><meta></meta><body><form action='/' method='GET'>Is BIN:<select name='has_bin'><option value='Y'>Yes</option><option value='N' selected>No</option></select> Maximum months ROI:<input type='text' value='" + req.param('maxroi') + "' name='maxroi'> Minimum revenue:<input type='text' value='" + req.param('minrevenue') + "' name='minrevenue'><input type='submit'></form>";
-							
-							for (var key in ratios) {
+							arr = [];
+							for (var key in ratios){
+								arr.push(ratios[key]);
+							}
+							arr.sort(function(a, b){
+								var keyA = new Date(a.ends_at),
+									keyB = new Date(b.ends_at);
+								if(keyA < keyB) return -1;
+								if(keyA > keyB) return 1;
+								return 0;
+							});
+							ratios = arr;
+							for (var key = 0; key < ratios.length; key++) {
+								
 								//console.log(key['revenues']);
 								if ((ratios[key]['bins'] / ratios[key]['revenues']) <= req.param('maxroi') && key != undefined && ratios[key]['revenues'] != undefined && (ratios[key]['bins'] / ratios[key]['revenues']) != Infinity && ratios[key]['revenues'] >= req.param('minrevenue')) {
-									console.log(ratios[key]['reserve_met']);
+									//console.log(ratios[key]['reserve_met']);
+									console.log(key);
+									
 									if (ratios[key]['reserve_met'] == true){
-										lala2 += ('<span style=\'color: lightgreen;\'>RESERVE MET!</span> ' + (ratios[key]['bins'] / ratios[key]['revenues']) + ' months for <a href="' + key + '">' + key + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days<br>';
+										lala2 += ('<span style=\'color: lightgreen;\'>RESERVE MET!</span> ' + (ratios[key]['bins'] / ratios[key]['revenues']) + ' months for <a href="' + ratios[key]['html'] + '">' + ratios[key]['html'] + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days<br>';
 									}
 									else {
-										lala2 += ('<span>' + (ratios[key]['bins'] / ratios[key]['revenues']) + ' months for <a href="' + key + '">' + key + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days</span><br>';
+										lala2 += ('<span>' + (ratios[key]['bins'] / ratios[key]['revenues']) + ' months for <a href="' + ratios[key]['html'] + '">' + ratios[key]['html'] + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days</span><br>';
 										
 									}
 								}
@@ -131,11 +145,13 @@ function getresponse(result, has_bin, n){
 			var timeDiff = Math.abs(d2.getTime() - d1.getTime());
 			var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
 
-            ratios[htmls[i]] = {
+            ratios[d2] = {
                 'bins': parseFloat(bins[i]),
                 'revenues': parseFloat(revenues[i]),
 				'diffDays': diffDays,
-				'reserve_met': reserve_mets[i]
+				'reserve_met': reserve_mets[i],
+				'html': htmls[i],
+				'ends_at': d2
             };
             console.log(ratios[htmls[i]]);
         }
