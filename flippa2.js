@@ -9,7 +9,6 @@ var htmls = [];
 var ratios = {};
 var ends_ats = [];
 var reserve_mets = [];
-abc = 0;
 
 flippa = new Flippa();
 
@@ -21,16 +20,24 @@ app.get('/', function(req, res) {
 	htmls = [];
 	ratios = {};
 	ends_ats = [];
-	abc = 0;
-		if (!req.param('minrevenue')){
-		lala2 = "<html><meta></meta><body><form action='/' method='GET'>Is BIN:<select name='has_bin'><option value='Y'>Yes</option><option value='N'>No</option></select> Maximum months ROI:<input type='text' value='24' name='maxroi'> Minimum revenue:<input type='text' value='1000' name='minrevenue'><input type='submit'></form>";
+	if (!req.param('minrevenue')){
+		lala2 = "<html><meta></meta><body><form action='/' method='GET'>Is BIN:<select name='has_bin'><option value='Y'>Yes</option><option value='N'>No</option></select> Maximum months ROI:<input type='text' value='24' name='maxroi'> Minimum revenue:<input type='text' value='1000' name='minrevenue'> Uniques/mo: <input type='text' value='1000' name='uniques'><input type='submit'></form>";
                         
 		lala2+= "</body></html>";
 		res.send(lala2);
 	}
 	else{
 		res.header('Content-Type', 'text/html');
-
+		uri = 'https://api.flippa.com/v3/listings?filter[status]=open&'
+								+'filter[revenue_per_month][min]=' + req.param('minrevenue')
+								+'&filter[has_verified_revenue]=T&'
+								+'filter[has_verified_traffic]=T&'
+								+'filter[uniques_per_month][min]=' + req.param('uniques')
+								+'&filter[has_bin]=';
+							
+		(req.param('has_bin') == "Y") ? uri += 'T' :  uri+= 'F';
+		console.log(uri);
+		url = encodeURI(uri);
 		flippa
 			.authenticate({
 				grant_type: "password",
@@ -38,92 +45,70 @@ app.get('/', function(req, res) {
 				password: "yourflippapassword"
 			})
 			.then(function(response) {
-				// Authentication succeeded; can now make authorized requests.
-				// console.log(flippa.client.accessToken);
-				flippa
-					.listings
-					.list({
-							filter: {
-								status: "open",
-								has_verified_revenue: true,
-								has_bin: (req.param('has_bin') == "Y") ? 'true' : 'false' 
-							}
-						
-					}) //,has_bin: true}})
-					.then(function lala(response) {
-						//console.log(response.body.data[0]);
-						if (response == undefined) {
-							(req.param('has_bin') == "Y") ? lala2 = "<html><meta></meta><body><form action='/' method='GET'>Is BIN:<select name='has_bin'><option value='Y' selected>Yes</option><option value='N'>No</option></select> Maximum months ROI:<input type='text' value='" + req.param('maxroi') + "' name='maxroi'> Minimum revenue:<input type='text' value='" + req.param('minrevenue') + "' name='minrevenue'><input type='submit'></form>" : lala2 = "<html><meta></meta><body><form action='/' method='GET'>Is BIN:<select name='has_bin'><option value='Y'>Yes</option><option value='N' selected>No</option></select> Maximum months ROI:<input type='text' value='" + req.param('maxroi') + "' name='maxroi'> Minimum revenue:<input type='text' value='" + req.param('minrevenue') + "' name='minrevenue'><input type='submit'></form>";
-							arr = [];
-							for (var key in ratios){
-								arr.push(ratios[key]);
-							}
-							arr.sort(function(a, b){
-								var keyA = new Date(a.ends_at),
-									keyB = new Date(b.ends_at);
-								if(keyA < keyB) return -1;
-								if(keyA > keyB) return 1;
-								return 0;
-							});
-							ratios = arr;
-							for (var key = 0; key < ratios.length; key++) {
-								
-								//console.log(key['revenues']);
-								if ((ratios[key]['bins'] / ratios[key]['revenues']) <= req.param('maxroi') && key != undefined && ratios[key]['revenues'] != undefined && (ratios[key]['bins'] / ratios[key]['revenues']) != Infinity && ratios[key]['revenues'] >= req.param('minrevenue')) {
-									//console.log(ratios[key]['reserve_met']);
-									console.log(key);
-									
-									if (ratios[key]['reserve_met'] == true){
-										lala2 += ('<span style=\'color: lightgreen;\'>RESERVE MET!</span> ' + Math.round(100*(ratios[key]['bins'] / ratios[key]['revenues']))/100 + ' months for <a href="' + ratios[key]['html'] + '">' + ratios[key]['html'] + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days<br>';
-									}
-									else {
-										lala2 += ('<span>' + Math.round(100*(ratios[key]['bins'] / ratios[key]['revenues']))/100 + ' months for <a href="' + ratios[key]['html'] + '">' + ratios[key]['html'] + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days</span><br>';
-										
-									}
-								}
-							}
-						
-							lala2 += "</body></html>";
-							console.log(lala2);
-							res.send(lala2);
-						} else {
+				request(url,  function(error, response, body) {
+					console.log(error);
+					lala(error, response, body, req, res);
 
-							if (abc >= 1) {
-								//console.log(response.body);
-								var result2 = (JSON.parse(response.body));
-								var result = result2.data;
-								getresponse(result, req.param('has_bin'), ((result2.meta)['page_number'] - 1) * (result2.meta)['page_size']);
-								request((result2.links)['next'], function(error, response, body) {
-									lala(response);
-
-								})
-							} else {
-								var result = (response.body.data);
-								getresponse(result, req.param('has_bin'), (response.body.meta['page_number'] - 1) * response.body.meta['page_size']);
-								request(response.body.links.next, function(error, response, body) {
-									lala(response);
-
-								});
-							}
-							abc++;
-						}
-					})
+				})
 			})
 		}
 })
+function lala(error,response,body,req,res){
+	if (response == undefined) {
+		(req.param('has_bin') == "Y") ? lala2 = "<html><meta></meta><body><form action='/' method='GET'>Is BIN:<select name='has_bin'><option value='Y' selected>Yes</option><option value='N'>No</option></select> Maximum months ROI:<input type='text' value='" + req.param('maxroi') + "' name='maxroi'> Minimum revenue:<input type='text' value='" + req.param('minrevenue') + "' name='minrevenue'> Uniques/mo: <input type='text' value='" + req.param('uniques') + "' name='uniques'><input type='submit'></form>" : lala2 = "<html><meta></meta><body><form action='/' method='GET'>Is BIN:<select name='has_bin'><option value='Y'>Yes</option><option value='N' selected>No</option></select> Maximum months ROI:<input type='text' value='" + req.param('maxroi') + "' name='maxroi'> Minimum revenue:<input type='text' value='" + req.param('minrevenue') + "' name='minrevenue'> Uniques/mo: <input type='text' value='" + req.param('uniques') + "' name='uniques'><input type='submit'></form>";
+		arr = [];
+		for (var key in ratios){
+			arr.push(ratios[key]);
+		}
+		arr.sort(function(a, b){
+			var keyA = new Date(a.ends_at),
+				keyB = new Date(b.ends_at);
+			if(keyA < keyB) return -1;
+			if(keyA > keyB) return 1;
+			return 0;
+		});
+		ratios = arr;
+		
+		for (var key = 0; key < ratios.length; key++) {
+			
+			if ((ratios[key]['bins'] / ratios[key]['revenues']) <= req.param('maxroi') && key != undefined && ratios[key]['revenues'] != undefined && (ratios[key]['bins'] / ratios[key]['revenues']) != Infinity && ratios[key]['revenues'] >= req.param('minrevenue')) {
+				
+				if (ratios[key]['reserve_met'] == true){
+					lala2 += ('<span style=\'color: lightgreen;\'>RESERVE MET!</span> ' + Math.round(100*(ratios[key]['bins'] / ratios[key]['revenues']))/100 + ' months for <a href="' + ratios[key]['html'] + '">' + ratios[key]['html'] + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days<br>';
+				}
+				else {
+					lala2 += ('<span>' + Math.round(100*(ratios[key]['bins'] / ratios[key]['revenues']))/100 + ' months for <a href="' + ratios[key]['html'] + '">' + ratios[key]['html'] + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days</span><br>';		
+				}
+			}
+		}
+	
+		lala2 += "</body></html>";
+		
+		res.send(lala2);
+	} else {
+		//console.log(response);
+		var result2 = (JSON.parse(response.body));
+		var result = result2.data;
+		getresponse(result, req.param('has_bin'), ((result2.meta)['page_number'] - 1) * (result2.meta)['page_size']);
+		//console.log((result2.links));
+		request((result2.links)['next'], function(error, response, body) {
+			//console.log(error);
+			//console.log(response);
+			lala(error, response, body, req, res);
 
+		})
+	}
+}
 app.listen(3000, function() {
     console.log('Example app listening on port 3000!')
 })
 
 
 function getresponse(result, has_bin, n){
-    //console.log(n);
     for (var i = 0; i < result.length + 0; i++) {
-        console.log(result[i]);
+        
         revenues[i + n] = result[i]['revenue_per_month'];
-        //console.log(revenues[i + n]);
-        profits[i + n] = result[i]['profit_per_month'];
+		profits[i + n] = result[i]['profit_per_month'];
 		if (has_bin == "N"){
 			bins[i + n] = result[i]['current_price']; //current_pricebuy_it_now_price
         }
@@ -137,10 +122,8 @@ function getresponse(result, has_bin, n){
     }
     var i = n;
     for (var bin in bins) {
-        //console.log(i);
         if (bin != undefined) {
-            //console.log(bins[i]);
-			var d1 = new Date();
+    		var d1 = new Date();
 			var d2 = new Date(ends_ats[i]);
 			var timeDiff = Math.abs(d2.getTime() - d1.getTime());
 			var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
@@ -153,7 +136,6 @@ function getresponse(result, has_bin, n){
 				'html': htmls[i],
 				'ends_at': d2
             };
-            console.log(ratios[htmls[i]]);
         }
         i++;
     }
