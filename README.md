@@ -17,3 +17,7 @@ https://www.screencast.com/t/TwWhq3ZLzKDU
 V5. has a variable dropdown for whether or not to consider Buy It Now values or traditional auctions:
 
 https://www.screencast.com/t/6M55Y14EEGnz  
+
+V6. shows those listings that have met reserve with a shiny green indicator:
+
+https://www.screencast.com/t/5sfX9HTpIOT3
