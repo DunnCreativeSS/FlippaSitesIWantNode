@@ -21,7 +21,7 @@ app.get('/', function(req, res) {
 	ratios = {};
 	ends_ats = [];
 	if (!req.param('minrevenue')){
-		lala2 = "<html><meta></meta><body><form action='/' method='GET'>Is BIN:<select name='has_bin'><option value='Y'>Yes</option><option value='N'>No</option></select> Maximum months ROI:<input type='text' value='24' name='maxroi'> Minimum revenue:<input type='text' value='1000' name='minrevenue'> Uniques/mo: <input type='text' value='1000' name='uniques'><input type='submit'></form>";
+		lala2 = "<html><meta></meta><body><form action='/' method='GET'>Is BIN:<select name='has_bin'><option value='Y'>Yes</option><option value='N'>No</option></select> Maximum months ROI:<input type='text' value='24' name='maxroi'> Minimum revenue:<input type='text' value='1000' name='minrevenue'> Uniques/mo: <input type='text' value='95000' name='uniques'><input type='submit'></form>";
                         
 		lala2+= "</body></html>";
 		res.send(lala2);
