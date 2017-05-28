@@ -25,3 +25,7 @@ https://www.screencast.com/t/5sfX9HTpIOT3
 V7. shows listings sorted by those (auctions) ending soonest:
 
 https://www.screencast.com/t/hW0vt6rd
+
+V8. ended dependency on Flippa node module other than authentication and now uses requests library to get initial as well as additional Flippa results, so we can now sort by [min]s and [max]s of stuff. Added [min] uniques_per_month:
+
+https://www.screencast.com/t/O8IYSmJU
