@@ -29,3 +29,7 @@ https://www.screencast.com/t/hW0vt6rd
 V8. ended dependency on Flippa node module other than authentication and now uses requests library to get initial as well as additional Flippa results, so we can now sort by [min]s and [max]s of stuff. Added [min] uniques_per_month:
 
 https://www.screencast.com/t/O8IYSmJU
+
+V9. implements a strategy for winning auctions (doesn't really apply to BIN) whereby underappreciated adsense or other ad potential can be identified and then capitalized on. The theory is that those sites with many verified uniques but not that much verified revenue can probably be easily capitalized on to realize near-instant increases in revenue.
+
+https://www.screencast.com/t/wToKbCzyd7
