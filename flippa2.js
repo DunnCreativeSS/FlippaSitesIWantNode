@@ -29,7 +29,7 @@ app.get('/', function(req, res) {
 	}
 	else{
 		res.header('Content-Type', 'text/html');
-		uri = 'https://api.flippa.com/v3/listings?filter[status]=open&'
+		uri = 'https://api.flippa.com/v3/listings?filter[age][min]=13&filter[status]=open&'
 								+'filter[revenue_per_month][min]=' + req.param('minrevenue')
 								
 								+'&filter[has_verified_traffic]=T&'
