@@ -7,6 +7,8 @@ var profits = [];
 var bins = [];
 var htmls = [];
 var ratios = {};
+var ends_ats = [];
+var reserve_mets = [];
 abc = 0;
 
 flippa = new Flippa();
@@ -14,9 +16,11 @@ flippa = new Flippa();
 app.get('/', function(req, res) {
 	revenues = [];
 	profits = [];
+	reserve_mets = [];
 	bins = [];
 	htmls = [];
 	ratios = {};
+	ends_ats = [];
 	abc = 0;
 		if (!req.param('minrevenue')){
 		lala2 = "<html><meta></meta><body><form action='/' method='GET'>Is BIN:<select name='has_bin'><option value='Y'>Yes</option><option value='N'>No</option></select> Maximum months ROI:<input type='text' value='24' name='maxroi'> Minimum revenue:<input type='text' value='1000' name='minrevenue'><input type='submit'></form>";
@@ -54,7 +58,14 @@ app.get('/', function(req, res) {
 							for (var key in ratios) {
 								//console.log(key['revenues']);
 								if ((ratios[key]['bins'] / ratios[key]['revenues']) <= req.param('maxroi') && key != undefined && ratios[key]['revenues'] != undefined && (ratios[key]['bins'] / ratios[key]['revenues']) != Infinity && ratios[key]['revenues'] >= req.param('minrevenue')) {
-									lala2 += ((ratios[key]['bins'] / ratios[key]['revenues']) + ' months for <a href="' + key + '">' + key + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + '<br>';
+									console.log(ratios[key]['reserve_met']);
+									if (ratios[key]['reserve_met'] == true){
+										lala2 += ('<span style=\'color: lightgreen;\'>RESERVE MET!</span> ' + (ratios[key]['bins'] / ratios[key]['revenues']) + ' months for <a href="' + key + '">' + key + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days<br>';
+									}
+									else {
+										lala2 += ('<span>' + (ratios[key]['bins'] / ratios[key]['revenues']) + ' months for <a href="' + key + '">' + key + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days</span><br>';
+										
+									}
 								}
 							}
 						
@@ -95,7 +106,7 @@ app.listen(3000, function() {
 function getresponse(result, has_bin, n){
     //console.log(n);
     for (var i = 0; i < result.length + 0; i++) {
-        //console.log(result[i]);
+        console.log(result[i]);
         revenues[i + n] = result[i]['revenue_per_month'];
         //console.log(revenues[i + n]);
         profits[i + n] = result[i]['profit_per_month'];
@@ -106,6 +117,8 @@ function getresponse(result, has_bin, n){
 			bins[i + n] = result[i]['buy_it_now_price']; //current_pricebuy_it_now_price
 
 		}
+		reserve_mets[i + n] = result[i]['reserve_met'];
+		ends_ats[i + n] = result[i]['ends_at'];
 		htmls[i + n] = result[i]['html_url'];
     }
     var i = n;
@@ -113,11 +126,18 @@ function getresponse(result, has_bin, n){
         //console.log(i);
         if (bin != undefined) {
             //console.log(bins[i]);
+			var d1 = new Date();
+			var d2 = new Date(ends_ats[i]);
+			var timeDiff = Math.abs(d2.getTime() - d1.getTime());
+			var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+
             ratios[htmls[i]] = {
                 'bins': parseFloat(bins[i]),
-                'revenues': parseFloat(revenues[i])
+                'revenues': parseFloat(revenues[i]),
+				'diffDays': diffDays,
+				'reserve_met': reserve_mets[i]
             };
-            //console.log(ratios[i]);
+            console.log(ratios[htmls[i]]);
         }
         i++;
     }
