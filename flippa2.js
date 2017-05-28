@@ -43,8 +43,8 @@ app.get('/', function(req, res) {
 		flippa
 			.authenticate({
 				grant_type: "password",
-				username: "jarettrsdunn@gmail.com",
-				password: "wordpass"
+				username: "yourflippaemail",
+				password: "yourflippapassword"
 			})
 			.then(function(response) {
 				request(url,  function(error, response, body) {
