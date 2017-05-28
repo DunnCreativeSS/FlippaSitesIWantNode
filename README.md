@@ -33,3 +33,7 @@ https://www.screencast.com/t/O8IYSmJU
 V9. implements a strategy for winning auctions (doesn't really apply to BIN) whereby underappreciated adsense or other ad potential can be identified and then capitalized on. The theory is that those sites with many verified uniques but not that much verified revenue can probably be easily capitalized on to realize near-instant increases in revenue.
 
 https://www.screencast.com/t/wToKbCzyd7
+
+V9.2. 'est income' is simply uniques / 40.
+
+https://www.screencast.com/t/FcPZIc5jDz
