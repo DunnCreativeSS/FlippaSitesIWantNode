@@ -74,10 +74,10 @@ app.get('/', function(req, res) {
 									console.log(key);
 									
 									if (ratios[key]['reserve_met'] == true){
-										lala2 += ('<span style=\'color: lightgreen;\'>RESERVE MET!</span> ' + (ratios[key]['bins'] / ratios[key]['revenues']) + ' months for <a href="' + ratios[key]['html'] + '">' + ratios[key]['html'] + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days<br>';
+										lala2 += ('<span style=\'color: lightgreen;\'>RESERVE MET!</span> ' + Math.round(100*(ratios[key]['bins'] / ratios[key]['revenues']))/100 + ' months for <a href="' + ratios[key]['html'] + '">' + ratios[key]['html'] + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days<br>';
 									}
 									else {
-										lala2 += ('<span>' + (ratios[key]['bins'] / ratios[key]['revenues']) + ' months for <a href="' + ratios[key]['html'] + '">' + ratios[key]['html'] + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days</span><br>';
+										lala2 += ('<span>' + Math.round(100*(ratios[key]['bins'] / ratios[key]['revenues']))/100 + ' months for <a href="' + ratios[key]['html'] + '">' + ratios[key]['html'] + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days</span><br>';
 										
 									}
 								}
