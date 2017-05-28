@@ -34,6 +34,6 @@ V9. implements a strategy for winning auctions (doesn't really apply to BIN) whe
 
 https://www.screencast.com/t/wToKbCzyd7
 
-V9.2. 'est income' is simply uniques / 40.
+V9.2. 'est income' is simply uniques / 100.
 
 https://www.screencast.com/t/FcPZIc5jDz
