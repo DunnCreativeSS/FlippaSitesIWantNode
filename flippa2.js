@@ -91,7 +91,7 @@ function lala(error,response,body,req,res){
 							lala2 += "<br><br>";
 						}
 						if (hiddenGem == true){
-							lala2 += "HIDDEN GEM uniques p. dollar earned = " + Math.round(parseFloat(ratios[key]['uniques']) / parseFloat(ratios[key]['revenues'])) + "; ";
+							lala2 += "HIDDEN GEM est income = $" + Math.round(parseFloat(ratios[key]['uniques']) / 100) + "; uniques p. dollar earned = " + Math.round(parseFloat(ratios[key]['uniques']) / parseFloat(ratios[key]['revenues'])) + "; ";
 						}
 						if (ratios[key]['reserve_met'] == true){
 							lala2 += ('<span style=\'color: lightgreen;\'>RESERVE MET!</span> ' + Math.round(100*(ratios[key]['bins'] / ratios[key]['revenues']))/100 + ' months for <a href="' + ratios[key]['html'] + '">' + ratios[key]['html'] + '</a> earning $' + ratios[key]['revenues'] + ' at $' + ratios[key]['bins']) + ' ending in ' + ratios[key]['diffDays'] + ' days, uniques: ' + ratios[key]['uniques'] + '<br>';
